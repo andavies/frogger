@@ -22,6 +22,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+        
+
     canvas.width = 505;
     canvas.height = 606;
     // doc.body.appendChild(canvas);
@@ -94,6 +96,9 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+
+        // ANDY
+        timer.update(dt);
     }
 
     /* This function initially draws the "game level", it will then call
@@ -135,6 +140,8 @@ var Engine = (function(global) {
             }
         }
 
+       
+
         renderEntities();
     }
 
@@ -151,6 +158,9 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+        // ANDY
+        timer.render();
     }
 
     /* This function does nothing but it could have been a good place to

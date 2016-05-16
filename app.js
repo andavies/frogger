@@ -1,5 +1,5 @@
 /*  app.js
-    Andrew Davies (and udacity.com)
+    Andrew Davies 
     23/02/16
     1andydavies1@gmail.com */
 
@@ -132,3 +132,46 @@ document.onkeydown = function(e) {
         return false;
     }
 };
+
+
+
+
+// add game timer 
+
+// variable initialisations outside timer render function
+var seconds = 60,
+    dtCount = 0;
+
+// set timer font here to avoid setting it every time render function is called    
+ctx.font = "80px Georgia";
+
+// game timer class, takes coords as arguments
+var Timer = function(){};
+
+// timer render function
+Timer.prototype.render = function() {
+    ctx.fillText(seconds, 16, 120);
+}
+
+// timer update function
+Timer.prototype.update = function(dt) {
+
+    /* dt is the time between game ticks
+       dtCount is a cumulative log of the game ticks */
+    dtCount += dt;
+
+    // once a second has passed..
+    if (dtCount > 1) {
+        seconds--;
+        // reset dtCount for the next second
+        dtCount = 0;
+    }
+
+    // if time run out, reset
+    if (seconds === 0) {
+        // TODO
+    }
+}
+
+// instantiate timer
+var timer = new Timer();
