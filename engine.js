@@ -96,11 +96,19 @@ var Engine = (function(global) {
      * called when timer reaches zero. Handles end-of-game and restart.
      */
     function reset() {
+
         // test
         console.log("game over");
+
+        // wait 3 seconds then restart
+        var waitTime = 3;
         window.setTimeout(function(){
             init();
-        }, 3000);
+            // reset player position
+            player.reset();
+        }, waitTime * 1000);
+
+
     }
 
     /* This is called by the update function and loops through all of the
