@@ -139,13 +139,13 @@ document.onkeydown = function(e) {
 // add game timer 
 
 // variable initialisations outside timer render function
-var seconds = 60,
+//var seconds = 5,
     dtCount = 0;
 
 // set timer font here to avoid setting it every time render function is called    
 ctx.font = "80px Georgia";
 
-// game timer class, takes coords as arguments
+// game timer class
 var Timer = function(){};
 
 // timer render function
@@ -154,7 +154,7 @@ Timer.prototype.render = function() {
 }
 
 // timer update function
-Timer.prototype.update = function(dt) {
+Timer.prototype.update = function(dt, reset) {
 
     /* dt is the time between game ticks
        dtCount is a cumulative log of the game ticks */
@@ -169,7 +169,7 @@ Timer.prototype.update = function(dt) {
 
     // if time run out, reset
     if (seconds === 0) {
-        // TODO
+        reset();
     }
 }
 

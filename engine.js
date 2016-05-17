@@ -57,7 +57,11 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        // ANDY: if seconds <= 0 stop the engine
+        if (seconds > 0) {
+            win.requestAnimationFrame(main);  
+        }
+        
     }
 
     /* This function does some initial setup that should only occur once,
@@ -65,7 +69,11 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        //reset();
+        // set timer to 60
+        // seconds in global scope so it can be accessed by timer.update and doesn't have to
+        // be passed through several functions
+        seconds = 10;
         lastTime = Date.now();
         main();
     }
@@ -84,6 +92,17 @@ var Engine = (function(global) {
         // checkCollisions();
     }
 
+    /* ANDY: (note: this function no longer called by init())
+     * called when timer reaches zero. Handles end-of-game and restart.
+     */
+    function reset() {
+        // test
+        console.log("game over");
+        window.setTimeout(function(){
+            init();
+        }, 3000);
+    }
+
     /* This is called by the update function and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
      * their update() methods. It will then call the update function for your
@@ -97,8 +116,8 @@ var Engine = (function(global) {
         });
         player.update();
 
-        // ANDY
-        timer.update(dt);
+        // ANDY: pass reset function to update so it has it in scope for when time=0
+        timer.update(dt, reset);
     }
 
     /* This function initially draws the "game level", it will then call
@@ -163,13 +182,7 @@ var Engine = (function(global) {
         timer.render();
     }
 
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
-     */
-    function reset() {
-        // noop
-    }
+    
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
