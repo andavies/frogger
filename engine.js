@@ -76,8 +76,14 @@ var Engine = (function(global) {
         // set timer to 60
         // seconds in global scope so it can be accessed by timer.update and doesn't have to
         // be passed through several functions
-        seconds = 5;
+        seconds = 60;
         lastTime = Date.now();
+
+        // initialise collectables
+        collectables.forEach(function(collectable) {
+            collectable.reset();
+        });
+
         main();
     }
 
@@ -132,6 +138,11 @@ var Engine = (function(global) {
 
         // ANDY: pass reset function to update so it has it in scope for when time=0
         timer.update(dt, reset);
+
+        // ANDY update collectables
+        collectables.forEach(function(collectable) {
+            collectable.update();
+        });
     }
 
     /* This function initially draws the "game level", it will then call
@@ -194,6 +205,13 @@ var Engine = (function(global) {
 
         // ANDY
         timer.render();
+
+        // ANDY
+        collectables.forEach(function(collectable) {
+            //console.log(this);
+            collectable.render();
+
+        });
     }
 
     // ANDY:
@@ -220,7 +238,10 @@ var Engine = (function(global) {
         'img/water-block.png',
         'img/grass-block.png',
         'img/enemy-bug.png',
-        'img/char-boy.png'
+        'img/char-boy.png',
+        'img/Gem Blue.png',
+        'img/Gem Orange.png',
+        'img/Heart.png'
     ]);
     Resources.onReady(init);
 

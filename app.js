@@ -5,6 +5,8 @@
 
 /* This file is where the game's functionality is implemented */
 
+
+
 // Enemy pseudoclassical class
 var Enemy = function(x, y, speed){
     this.x = x;
@@ -68,10 +70,12 @@ Player.prototype = {
         // reset key press
         this.keyPressed = null;
 
-        // if reaches water, reset position
+        // if reaches water, reset player, reset collectables
         if (this.y < 60) {
-            // bind player to 'this' (would be bound to window otherwise)
+            // bind player to 'this' (would be bound to window otherwise) and call reset method
             setTimeout(this.reset.bind(this), 500);
+
+            
         }
     },
     reset : function(){
@@ -91,26 +95,30 @@ Player.prototype = {
 // instantiate enemies
 
 var allEnemies = [];
-numOfEnemies = 18;
+var numOfEnemies = 18;
 
-for (i = 0; i < numOfEnemies; i++){
-    // stagger staring x value so enemies dont come in waves of 3
-    // TODO make cleaner with switch
-    // TODO factor into makeEnemies function
-    var x = i * 100;
-    if ((i % 3) === 0) {
-        var y = 65;
-    }
-    else if ((i % 3) === 1) {
-        var y = 150;
-    }
-    else if ((i % 3) === 2) {
-        var y = 230;
-    }
-    // TODO factor out speed here?
-    var enemy = new Enemy(x, y, Math.random());
-    allEnemies.push(enemy);
-};
+// Encapsulate in IIFE to prevent variables x and y polluting global scope
+(function() {
+   for (var i = 0; i < numOfEnemies; i++){
+        // stagger staring x value so enemies dont come in waves of 3
+        // TODO make cleaner with switch
+        // TODO factor into makeEnemies function
+        var x = i * 100;
+        if ((i % 3) === 0) {
+            var y = 65;
+        }
+        else if ((i % 3) === 1) {
+            var y = 150;
+        }
+        else if ((i % 3) === 2) {
+            var y = 230;
+        }
+        // TODO factor out speed here?
+        var enemy = new Enemy(x, y, Math.random());
+        allEnemies.push(enemy);
+    }; 
+})();
+    
 
 var player = new Player(200, 405);
 
@@ -135,12 +143,11 @@ document.onkeydown = function(e) {
 
 
 
-
+/*************************************************/
 // add game timer 
 
 // variable initialisations outside timer render function
-//var seconds = 5,
-    dtCount = 0;
+var dtCount = 0;
 
 // set timer font here to avoid setting it every time render function is called    
 ctx.font = "80px Georgia";
@@ -175,3 +182,104 @@ Timer.prototype.update = function(dt, reset) {
 
 // instantiate timer
 var timer = new Timer();
+
+/************************************************************/
+// COLLECTABLES
+
+/* Collectable is the superclass. 
+ * GemBlue, GemOrgange and Heart are sub-classes of Collectable
+ */
+
+// define class with only coords unique to each object
+var Collectable = function() {};
+
+// define prototype methods
+Collectable.prototype = {
+    render: function() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    },
+    
+    // reset method called at start of game and when player touches water
+    reset: function() {
+        // move to random point on grid 
+        this.x = getRandomInt(0, 5) * 100;
+        this.y = getRandomInt(1, 4) * 80;
+    },
+
+    // .
+    update: function() {
+        // test for collision with player (taken from enemy class: refactor into generic test?)
+        if (this.x < player.x + 25 && this.x + 50 > player.x &&
+            this.y < player.y + 50 && 50 + this.y > player.y) {
+
+            // reset collectable
+            // move off screen, then reset after 2 seconds
+            this.x = -200;
+            this.y = -200;
+            setTimeout(this.reset.bind(this), 2000);
+        }
+    }    
+}
+
+// define sublasses
+var GemBlue = function(x, y) {
+    Collectable.call(this, x, y);
+}
+var GemOrange = function(x, y) {
+    Collectable.call(this, x, y);
+}
+var Heart = function(x, y) {
+    Collectable.call(this, x, y);
+}
+
+// define subclass prototypes
+GemBlue.prototype = Object.create(Collectable.prototype);
+GemBlue.prototype.sprite = 'img/Gem Blue.png';
+GemBlue.prototype.value = 1;
+
+GemOrange.prototype = Object.create(Collectable.prototype);
+GemOrange.prototype.sprite = 'img/Gem Orange.png';
+GemOrange.prototype.value = 5;
+
+Heart.prototype = Object.create(Collectable.prototype);
+Heart.prototype.sprite = 'img/Heart.png';
+Heart.prototype.value = 10;
+
+// instantiate collectables
+
+var collectables = [];
+var numOfEach = 1;
+
+for (var i = 0; i < numOfEach; i++) {
+    // TODO: make this cleaner?
+    
+    var heart = new Heart();
+    collectables.push(heart);
+
+    
+    var gemBlue = new GemBlue();
+    collectables.push(gemBlue);
+
+    
+    var gemOrange = new GemOrange();
+    collectables.push(gemOrange);
+}
+
+
+
+
+
+/*******************/
+
+// Returns a random integer between min (included) and max (excluded)
+// from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
+
+
+
+
+
