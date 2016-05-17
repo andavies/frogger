@@ -22,6 +22,9 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    // ANDY
+    var highestScore = 0;
+
         
 
     canvas.width = 505;
@@ -201,7 +204,8 @@ var Engine = (function(global) {
 
         // wait, then clear when game restarts
         window.setTimeout(function(){
-            document.getElementById("score_alert").innerHTML = "";
+            // update highest score
+            document.getElementById("score_alert").innerHTML = "Your highest score is " + highestScore;
         }, waitTime * 1000);
     }
 
