@@ -73,7 +73,7 @@ var Engine = (function(global) {
         // set timer to 60
         // seconds in global scope so it can be accessed by timer.update and doesn't have to
         // be passed through several functions
-        seconds = 10;
+        seconds = 5;
         lastTime = Date.now();
         main();
     }
@@ -107,6 +107,9 @@ var Engine = (function(global) {
             // reset player position
             player.reset();
         }, waitTime * 1000);
+
+        // show score message, pass waitTime so function can access it
+        renderFinalScore(waitTime);
 
 
     }
@@ -188,6 +191,18 @@ var Engine = (function(global) {
 
         // ANDY
         timer.render();
+    }
+
+    // ANDY:
+    function renderFinalScore(waitTime) {
+
+        // display score
+        document.getElementById("score_alert").innerHTML = "You scored X points!";
+
+        // wait, then clear when game restarts
+        window.setTimeout(function(){
+            document.getElementById("score_alert").innerHTML = "";
+        }, waitTime * 1000);
     }
 
     
