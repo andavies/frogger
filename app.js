@@ -166,9 +166,9 @@ Collectable.prototype = {
     
     // reset method called at start of game and when player touches water
     reset: function() {
-        // move to random point on grid 
-        this.x = getRandomInt(0, 5) * 100;
-        this.y = getRandomInt(1, 4) * 80;
+        // move to random point on grid (centred in grid squares)
+        this.x = (getRandomInt(0, 5) * 100) + 20;
+        this.y = (getRandomInt(0, 3) * 82) + 100;
     },
 
     // .

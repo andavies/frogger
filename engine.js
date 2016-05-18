@@ -76,7 +76,7 @@ var Engine = (function(global) {
         // set timer to 60
         // seconds in global scope so it can be accessed by timer.update and doesn't have to
         // be passed through several functions
-        seconds = 10;
+        seconds = 20;
         lastTime = Date.now();
 
         // initialise collectables
