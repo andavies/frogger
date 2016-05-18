@@ -212,6 +212,10 @@ var Engine = (function(global) {
             collectable.render();
 
         });
+
+        // ANDY
+        interimScoreBoard.render();
+        totalScoreBoard.render();
     }
 
     // ANDY:

@@ -5,7 +5,8 @@
 
 /* This file is where the game's functionality is implemented */
 
-
+/******************************************************************/
+// ENEMY CLASS
 
 // Enemy pseudoclassical class
 var Enemy = function(x, y, speed){
@@ -36,13 +37,20 @@ Enemy.prototype = {
         if (this.x < player.x + 25 && this.x + 50 > player.x &&
             this.y < player.y + 50 && 50 + this.y > player.y) {
 
+            // move player to start
             player.reset();
+
+            // reset interim score
+            interimScore = 0;
         }
     },
     render : function(){
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 };
+
+/**************************************************/
+// PLAYER CLASS
 
 // Player pseudoclassical class
 var Player = function(x, y){
@@ -70,12 +78,17 @@ Player.prototype = {
         // reset key press
         this.keyPressed = null;
 
-        // if reaches water, reset player, reset collectables
+        // if reaches water, reset player
         if (this.y < 60) {
             // bind player to 'this' (would be bound to window otherwise) and call reset method
-            setTimeout(this.reset.bind(this), 500);
+            //setTimeout(this.reset.bind(this), 500);
 
-            
+            //update scores
+            totalScore += interimScore;
+            interimScore = 0;
+
+            // reset player
+            this.reset();
         }
     },
     reset : function(){
@@ -92,59 +105,12 @@ Player.prototype = {
 };
 
 
-// instantiate enemies
 
-var allEnemies = [];
-var numOfEnemies = 18;
-
-// Encapsulate in IIFE to prevent variables x and y polluting global scope
-(function() {
-   for (var i = 0; i < numOfEnemies; i++){
-        // stagger staring x value so enemies dont come in waves of 3
-        // TODO make cleaner with switch
-        // TODO factor into makeEnemies function
-        var x = i * 100;
-        if ((i % 3) === 0) {
-            var y = 65;
-        }
-        else if ((i % 3) === 1) {
-            var y = 150;
-        }
-        else if ((i % 3) === 2) {
-            var y = 230;
-        }
-        // TODO factor out speed here?
-        var enemy = new Enemy(x, y, Math.random());
-        allEnemies.push(enemy);
-    }; 
-})();
-    
-
-var player = new Player(200, 405);
-
-// This listens for key presses and sends the keys to the Player.handleInput() method.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-    player.handleInput(allowedKeys[e.keyCode]);
-});
-
-// disable ability to scroll using arrow keys, so as not to interfere with game controls
-document.onkeydown = function(e) {
-    var k = e.keyCode;
-    if(k >= 37 && k <= 40) {
-        return false;
-    }
-};
 
 
 
 /*************************************************/
-// add game timer 
+// TIMER CLASS
 
 // variable initialisations outside timer render function
 var dtCount = 0;
@@ -180,11 +146,10 @@ Timer.prototype.update = function(dt, reset) {
     }
 }
 
-// instantiate timer
-var timer = new Timer();
+
 
 /************************************************************/
-// COLLECTABLES
+// COLLECTABLE CLASS
 
 /* Collectable is the superclass. 
  * GemBlue, GemOrgange and Heart are sub-classes of Collectable
@@ -217,6 +182,10 @@ Collectable.prototype = {
             this.x = -200;
             this.y = -200;
             setTimeout(this.reset.bind(this), 2000);
+
+            // update interimScore
+            interimScore += this.value;
+            console.log(interimScore);
         }
     }    
 }
@@ -245,6 +214,88 @@ Heart.prototype = Object.create(Collectable.prototype);
 Heart.prototype.sprite = 'img/Heart.png';
 Heart.prototype.value = 10;
 
+/********************************************************/
+// SCORE CLASS
+
+var interimScore = 0;
+var totalScore = 0;
+
+var ScoreBoard = function(type, x, y) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+};
+
+// TODO: make logic cleaner here? Do we need them to be the same class?
+ScoreBoard.prototype.render = function() {
+    if (this.type === 'interim'){
+        ctx.fillText(interimScore, this.x, this.y);
+    }
+    else if (this.type === 'total'){
+        ctx.fillText(totalScore, this.x, this.y);
+    }
+    
+};
+
+// instantiate
+var interimScoreBoard = new ScoreBoard('interim', 330, 120);
+var totalScoreBoard = new ScoreBoard('total', 430, 120);
+
+
+
+/******************************************************************/
+
+// instantiate enemies
+
+var allEnemies = [];
+var numOfEnemies = 10;
+
+// Encapsulate in IIFE to prevent variables x and y polluting global scope
+(function() {
+   for (var i = 0; i < numOfEnemies; i++){
+        // stagger staring x value so enemies dont come in waves of 3
+        // TODO make cleaner with switch
+        // TODO factor into makeEnemies function
+        var x = i * 100;
+        if ((i % 3) === 0) {
+            var y = 65;
+        }
+        else if ((i % 3) === 1) {
+            var y = 150;
+        }
+        else if ((i % 3) === 2) {
+            var y = 230;
+        }
+        // TODO factor out speed here?
+        var enemy = new Enemy(x, y, Math.random());
+        allEnemies.push(enemy);
+    }; 
+})();
+    
+// instantiate player
+
+var player = new Player(200, 405);
+
+// This listens for key presses and sends the keys to the Player.handleInput() method.
+document.addEventListener('keyup', function(e) {
+    var allowedKeys = {
+        37: 'left',
+        38: 'up',
+        39: 'right',
+        40: 'down'
+    };
+    player.handleInput(allowedKeys[e.keyCode]);
+});
+
+// disable ability to scroll using arrow keys, so as not to interfere with game controls
+document.onkeydown = function(e) {
+    var k = e.keyCode;
+    if(k >= 37 && k <= 40) {
+        return false;
+    }
+};
+
+
 // instantiate collectables
 
 var collectables = [];
@@ -265,7 +316,8 @@ for (var i = 0; i < numOfEach; i++) {
     collectables.push(gemOrange);
 }
 
-
+// instantiate timer
+var timer = new Timer();
 
 
 
@@ -274,7 +326,7 @@ for (var i = 0; i < numOfEach; i++) {
 // Returns a random integer between min (included) and max (excluded)
 // from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 
