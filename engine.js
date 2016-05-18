@@ -76,7 +76,7 @@ var Engine = (function(global) {
         // set timer to 60
         // seconds in global scope so it can be accessed by timer.update and doesn't have to
         // be passed through several functions
-        seconds = 60;
+        seconds = 10;
         lastTime = Date.now();
 
         // initialise collectables
@@ -222,12 +222,16 @@ var Engine = (function(global) {
     function renderFinalScore(waitTime) {
 
         // display score
-        document.getElementById("score_alert").innerHTML = "You scored X points!";
+        document.getElementById("score_alert").innerHTML = "You scored " + totalScore + " points!";
 
         // wait, then clear when game restarts
         window.setTimeout(function(){
             // update highest score
             document.getElementById("score_alert").innerHTML = "Your highest score is " + highestScore;
+
+            // reset scores
+            interimScore = 0;
+            totalScore = 0;
         }, waitTime * 1000);
     }
 
