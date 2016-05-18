@@ -224,6 +224,11 @@ var Engine = (function(global) {
         // display score
         document.getElementById("score_alert").innerHTML = "You scored " + totalScore + " points!";
 
+        // update highest score
+        if (totalScore > highestScore) {
+            highestScore = totalScore;
+        }
+
         // wait, then clear when game restarts
         window.setTimeout(function(){
             // update highest score
