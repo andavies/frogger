@@ -303,8 +303,8 @@ var timer = new Timer();
 
 
 // instantiate scores
-var interimScoreBoard = new ScoreBoard('interim', 330, 120);
-var totalScoreBoard = new ScoreBoard('total', 430, 120);
+var interimScoreBoard = new ScoreBoard('interim', 320, 120);
+var totalScoreBoard = new ScoreBoard('total', 420, 120);
 
 
 /**********************************************************************/
@@ -338,10 +338,3 @@ document.onkeydown = function(e) {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
-
-
-
-
-
-
-
