@@ -1,5 +1,9 @@
 /* Engine.js
- * Udacity.com (line 29 Andy Davies)
+ *
+ * Outline taken from Udacity.com, 
+ * modified by Andy Davies: Engine, init(), updateEntities(), renderEntities().
+ * implemented by Andy Davies:  reset(), renderFinalScore().
+ *
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
  * render methods on the player and enemy objects (defined in app.js).
@@ -22,10 +26,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    // ANDY
-    var highestScore = 0;
-
-        
+    // initialise highest score 
+    var highestScore = 0;        
 
     canvas.width = 505;
     canvas.height = 606;
@@ -60,7 +62,7 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        // ANDY: if seconds <= 0 stop the engine
+        // if seconds <= 0 stop the engine
         if (seconds > 0) {
             win.requestAnimationFrame(main);  
         }
@@ -72,10 +74,8 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        //reset();
-        // set timer to 60
-        // seconds in global scope so it can be accessed by timer.update and doesn't have to
-        // be passed through several functions
+        /* seconds in global scope so it can be accessed by timer.update and doesn't have to
+           be passed through several functions */
         seconds = 20;
         lastTime = Date.now();
 
@@ -98,16 +98,12 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
     }
 
-    /* ANDY: (note: this function no longer called by init())
-     * called when timer reaches zero. Handles end-of-game and restart.
+    /* 
+     * reset called when timer reaches zero. Handles end-of-game and restart.
      */
     function reset() {
-
-        // test
-        console.log("game over");
 
         // wait 3 seconds then restart
         var waitTime = 3;
@@ -119,8 +115,6 @@ var Engine = (function(global) {
 
         // show score message, pass waitTime so function can access it
         renderFinalScore(waitTime);
-
-
     }
 
     /* This is called by the update function and loops through all of the
@@ -136,10 +130,10 @@ var Engine = (function(global) {
         });
         player.update();
 
-        // ANDY: pass reset function to update so it has it in scope for when time=0
+        // pass reset function to timer.update so it has it in scope for when time=0
         timer.update(dt, reset);
 
-        // ANDY update collectables
+        // update collectables
         collectables.forEach(function(collectable) {
             collectable.update();
         });
@@ -182,9 +176,7 @@ var Engine = (function(global) {
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
-        }
-
-       
+        }       
 
         renderEntities();
     }
@@ -203,22 +195,18 @@ var Engine = (function(global) {
 
         player.render();
 
-        // ANDY
         timer.render();
 
-        // ANDY
         collectables.forEach(function(collectable) {
-            //console.log(this);
             collectable.render();
-
         });
 
-        // ANDY
         interimScoreBoard.render();
         totalScoreBoard.render();
     }
 
-    // ANDY:
+    /* this function manipulates the DOM to display
+       the total score on game end and the highest score in that session */
     function renderFinalScore(waitTime) {
 
         // display score
